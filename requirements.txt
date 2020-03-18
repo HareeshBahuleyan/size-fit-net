@@ -5,3 +5,4 @@ tqdm==4.43.0
 pandas==1.0.2
 matplotlib==3.2.0
 sklearn==0.22.2
+jsonnet==0.15.0

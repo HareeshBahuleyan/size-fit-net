@@ -10,10 +10,10 @@ class SFNet(nn.Module):
 
         self.embedding_dim = config["embedding_dim"]
 
-        self.item_embedding = nn.Embedding(num_embeddings=config["num_item_emb"], embedding_dim=self.embedding_dim)
-        self.category_embedding = nn.Embedding(num_embeddings=config["num_category_emb"], embedding_dim=self.embedding_dim)
         self.user_embedding = nn.Embedding(num_embeddings=config["num_user_emb"], embedding_dim=self.embedding_dim)
         self.cup_size_embedding = nn.Embedding(num_embeddings=config["num_cup_size_emb"], embedding_dim=self.embedding_dim)
+        self.item_embedding = nn.Embedding(num_embeddings=config["num_item_emb"], embedding_dim=self.embedding_dim)
+        self.category_embedding = nn.Embedding(num_embeddings=config["num_category_emb"], embedding_dim=self.embedding_dim)
         
         # Customer pathway transformation
         # user_embedding_dim + cup_size_embedding_dim + num_user_numeric_features
@@ -38,7 +38,7 @@ class SFNet(nn.Module):
         # Combined top layer pathway
         # u = output dim of user_transform_blocks
         # t = output dim of item_transform_blocks
-        # Pathway combination through [u, t, u-t, u*t]
+        # Pathway combination through [u, t, |u-t|, u*t]
         # Hence, input dimension will be 4*dim(u) 
         combined_layer_input_size = 4 * config["user_pathway"][-1]
         config["combined_pathway"].insert(0, combined_layer_input_size)
@@ -51,9 +51,39 @@ class SFNet(nn.Module):
         # Linear transformation from last hidden layer to output 
         self.hidden2output = nn.Linear(config["combined_pathway"][-1], config["num_targets"])
 
-    def forward(self, batch_input, target=None):
-        pass
+    def forward(self, batch_input):
+        
+        # Customer Pathway
+        user_emb = self.user_embedding(torch.tensor(batch_input["user_id"]))
+        cup_size_emb = self.cup_size_embedding(torch.tensor(batch_input["cup_size"]))
+        user_representation = torch.cat([user_emb, cup_size_emb, batch_input["user_numeric"]], axis=-1)
+        user_representation = self.user_transform_blocks(user_representation)
 
+        # Article Pathway
+        item_emb = self.item_embedding(torch.tensor(batch_input["item_id"]))
+        category_emb = self.category_embedding(torch.tensor(batch_input["category"]))
+        item_representation = torch.cat([item_emb, category_emb, batch_input["item_numeric"]], axis=-1)
+        item_representation = self.item_transform_blocks(item_representation)
+
+        # Combine the pathways
+        combined_representation = self.merge_representations(user_representation, item_representation)
+        combined_representation = self.combined_blocks(combined_representation)
+
+        # Output layer of logits
+        logits = self.hidden2output(combined_representation)
+        
+        return logits
+
+    def merge_representations(self, u, v):
+        """
+        Combining two different representations via:
+        - concatenation of the two representations
+        - element-wise product u ∗ v
+        - absolute element-wise difference |u-v|
+        Link: https://arxiv.org/pdf/1705.02364.pdf
+        """
+        return torch.cat([u, v, torch.abs(u-v), u*v], axis=-1)
+        
 
 class SkipBlock(nn.Module):
     def __init__(self, input_dim, output_dim, activation):

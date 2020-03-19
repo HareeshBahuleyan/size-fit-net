@@ -157,11 +157,11 @@ def main(args):
             pred_tracker = np.stack(pred_tracker[:-1], axis=0).reshape(-1, model_config["sfnet"]["num_targets"])
             precision, recall, f1_score, accuracy, auc = compute_metrics(target_tracker, pred_tracker)
 
-            writer.add_scalar("%s/Precision" % split.upper(), precision, epoch)
-            writer.add_scalar("%s/Recall" % split.upper(), recall, epoch)
-            writer.add_scalar("%s/F1-Score" % split.upper(), f1_score, epoch)
-            writer.add_scalar("%s/F1-Score" % split.upper(), accuracy, epoch)
-            writer.add_scalar("%s/AUC" % split.upper(), auc, epoch)
+            writer.add_scalar("%s-Epoch/Precision" % split.upper(), precision, epoch)
+            writer.add_scalar("%s-Epoch/Recall" % split.upper(), recall, epoch)
+            writer.add_scalar("%s-Epoch/F1-Score" % split.upper(), f1_score, epoch)
+            writer.add_scalar("%s-Epoch/Accuracy" % split.upper(), accuracy, epoch)
+            writer.add_scalar("%s-Epoch/AUC" % split.upper(), auc, epoch)
 
     # Save Model Config File
     with jsonlines.open(os.path.join(save_model_path, "config.jsonl"), "w") as fout:

@@ -20,7 +20,7 @@
         "num_targets": 3, // small, fit or large
     },
     "trainer": {
-        "num_epochs": 10,
+        "num_epochs": 20,
         "batch_size": 128,
         "optimizer": {
           "lr": 0.001,

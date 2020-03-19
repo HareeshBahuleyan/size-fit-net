@@ -24,7 +24,8 @@
         "batch_size": 1024,
         "optimizer": {
           "lr": 0.001,
-          "type": "adam"
+          "type": "adam",
+          "weight_decay": 0.0001,
         }
     },
     "logging": {

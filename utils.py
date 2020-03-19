@@ -4,6 +4,7 @@ import _jsonnet
 import torch
 
 from typing import Dict
+from sklearn import metrics
 from torch.autograd import Variable
 
 
@@ -22,3 +23,17 @@ def to_var(x, volatile=False):
     if torch.cuda.is_available():
         x = x.cuda()
     return Variable(x, volatile=volatile)
+
+def compute_metrics(target, pred_probs):
+    """
+    Computes metrics to report
+    """
+    pred_labels = pred_probs.argmax(-1)
+    precision = metrics.precision_score(target, pred_labels, average='micro')
+    recall = metrics.recall_score(target, pred_labels, average='micro')
+    f1_score = metrics.f1_score(target, pred_labels, average='micro')
+    accuracy = metrics.accuracy_score(target, pred_labels)
+    auc = metrics.roc_auc_score(target, pred_probs, average='macro', multi_class='ovr')
+
+    return precision, recall, f1_score, accuracy, auc
+    

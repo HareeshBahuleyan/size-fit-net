@@ -10,10 +10,26 @@ class SFNet(nn.Module):
 
         self.embedding_dim = config["embedding_dim"]
 
-        self.user_embedding = nn.Embedding(num_embeddings=config["num_user_emb"], embedding_dim=self.embedding_dim)
-        self.cup_size_embedding = nn.Embedding(num_embeddings=config["num_cup_size_emb"], embedding_dim=self.embedding_dim)
-        self.item_embedding = nn.Embedding(num_embeddings=config["num_item_emb"], embedding_dim=self.embedding_dim)
-        self.category_embedding = nn.Embedding(num_embeddings=config["num_category_emb"], embedding_dim=self.embedding_dim)
+        self.user_embedding = nn.Embedding(
+            num_embeddings=config["num_user_emb"],
+            embedding_dim=self.embedding_dim,
+            max_norm=1.0,
+        )
+        self.cup_size_embedding = nn.Embedding(
+            num_embeddings=config["num_cup_size_emb"],
+            embedding_dim=self.embedding_dim,
+            max_norm=1.0,
+        )
+        self.item_embedding = nn.Embedding(
+            num_embeddings=config["num_item_emb"],
+            embedding_dim=self.embedding_dim,
+            max_norm=1.0,
+        )
+        self.category_embedding = nn.Embedding(
+            num_embeddings=config["num_category_emb"],
+            embedding_dim=self.embedding_dim,
+            max_norm=1.0,
+        )
 
         # Customer pathway transformation
         # user_embedding_dim + cup_size_embedding_dim + num_user_numeric_features
@@ -22,7 +38,11 @@ class SFNet(nn.Module):
         self.user_transform_blocks = []
         for i in range(1, len(config["user_pathway"])):
             self.user_transform_blocks.append(
-                SkipBlock(config["user_pathway"][i - 1], config["user_pathway"][i], config["activation"],)
+                SkipBlock(
+                    config["user_pathway"][i - 1],
+                    config["user_pathway"][i],
+                    config["activation"],
+                )
             )
             self.user_transform_blocks.append(nn.Dropout(p=config["dropout"]))
         self.user_transform_blocks = nn.Sequential(*self.user_transform_blocks)
@@ -34,7 +54,11 @@ class SFNet(nn.Module):
         self.item_transform_blocks = []
         for i in range(1, len(config["user_pathway"])):
             self.item_transform_blocks.append(
-                SkipBlock(config["item_pathway"][i - 1], config["item_pathway"][i], config["activation"],)
+                SkipBlock(
+                    config["item_pathway"][i - 1],
+                    config["item_pathway"][i],
+                    config["activation"],
+                )
             )
             self.item_transform_blocks.append(nn.Dropout(p=config["dropout"]))
         self.item_transform_blocks = nn.Sequential(*self.item_transform_blocks)
@@ -49,36 +73,49 @@ class SFNet(nn.Module):
         self.combined_blocks = []
         for i in range(1, len(config["combined_pathway"])):
             self.combined_blocks.append(
-                SkipBlock(config["combined_pathway"][i - 1], config["combined_pathway"][i], config["activation"],)
+                SkipBlock(
+                    config["combined_pathway"][i - 1],
+                    config["combined_pathway"][i],
+                    config["activation"],
+                )
             )
             self.combined_blocks.append(nn.Dropout(p=config["dropout"]))
         self.combined_blocks = nn.Sequential(*self.combined_blocks)
 
         # Linear transformation from last hidden layer to output
-        self.hidden2output = nn.Linear(config["combined_pathway"][-1], config["num_targets"])
+        self.hidden2output = nn.Linear(
+            config["combined_pathway"][-1], config["num_targets"]
+        )
 
     def forward(self, batch_input):
 
         # Customer Pathway
         user_emb = self.user_embedding(batch_input["user_id"])
         cup_size_emb = self.cup_size_embedding(batch_input["cup_size"])
-        user_representation = torch.cat([user_emb, cup_size_emb, batch_input["user_numeric"]], axis=-1)
+        user_representation = torch.cat(
+            [user_emb, cup_size_emb, batch_input["user_numeric"]], axis=-1
+        )
         user_representation = self.user_transform_blocks(user_representation)
 
         # Article Pathway
         item_emb = self.item_embedding(batch_input["item_id"])
         category_emb = self.category_embedding(batch_input["category"])
-        item_representation = torch.cat([item_emb, category_emb, batch_input["item_numeric"]], axis=-1)
+        item_representation = torch.cat(
+            [item_emb, category_emb, batch_input["item_numeric"]], axis=-1
+        )
         item_representation = self.item_transform_blocks(item_representation)
 
         # Combine the pathways
-        combined_representation = self.merge_representations(user_representation, item_representation)
+        combined_representation = self.merge_representations(
+            user_representation, item_representation
+        )
         combined_representation = self.combined_blocks(combined_representation)
 
         # Output layer of logits
         logits = self.hidden2output(combined_representation)
+        pred_probs = F.softmax(logits, dim=-1) 
 
-        return logits
+        return logits, pred_probs
 
     def merge_representations(self, u, v):
         """
@@ -102,7 +139,10 @@ class SkipBlock(nn.Module):
 
         """
         super().__init__()
-        assert activation in ["relu", "tanh",], "Please specify a valid activation funciton: relu or tanh"
+        assert activation in [
+            "relu",
+            "tanh",
+        ], "Please specify a valid activation funciton: relu or tanh"
         if activation == "relu":
             self.activation = F.relu
         elif activation == "tanh":

@@ -18,13 +18,13 @@ class ModCloth(Dataset):
             # user features and embedding
             'user_id': np.asarray(self.data[idx]['user_id'], dtype=np.int64),
             'cup_size': np.asarray(self.data[idx]['cup_size'], dtype=np.int64),
-            'user_numeric': np.asarray(self.data[idx]['user_numeric']),
+            'user_numeric': np.asarray(self.data[idx]['user_numeric'], dtype=np.float32),
             # item features and embedding
             'item_id': np.asarray(self.data[idx]['item_id'], dtype=np.int64),
             'category': np.asarray(self.data[idx]['category'], dtype=np.int64),
-            'item_numeric': np.asarray(self.data[idx]['item_numeric']),
+            'item_numeric': np.asarray(self.data[idx]['item_numeric'], dtype=np.float32),
             # target variable
-            'fit': np.asarray(self.data[idx]['fit']),
+            'fit': np.asarray(self.data[idx]['fit'], dtype=np.int64),
         }
 
     def _read_data(self, data_path, split):

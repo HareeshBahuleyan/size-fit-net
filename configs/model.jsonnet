@@ -21,7 +21,7 @@
     },
     "trainer": {
         "num_epochs": 10,
-        "batch_size": 1024,
+        "batch_size": 8,
         "optimizer": {
           "lr": 0.001,
           "type": "adam"

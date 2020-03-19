@@ -8,3 +8,4 @@ sklearn==0.22.2
 jsonnet==0.15.0
 tensorboardx==2.0
 jsonlines==1.2.0
+tensorboard==2.1.1

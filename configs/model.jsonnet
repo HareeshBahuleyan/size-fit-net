@@ -20,8 +20,8 @@
         "num_targets": 3, // small, fit or large
     },
     "trainer": {
-        "num_epochs": 1,
-        "batch_size": 1024,
+        "num_epochs": 10,
+        "batch_size": 128,
         "optimizer": {
           "lr": 0.001,
           "type": "adam",
@@ -32,6 +32,6 @@
         "save_model_path": "runs/",
         "run_name": "trial_",
         "tensorboard": true,
-        "print_every": 2
+        "print_every": 10
     }
 }

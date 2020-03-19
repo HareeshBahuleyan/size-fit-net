@@ -54,14 +54,14 @@ class SFNet(nn.Module):
     def forward(self, batch_input):
         
         # Customer Pathway
-        user_emb = self.user_embedding(torch.tensor(batch_input["user_id"]))
-        cup_size_emb = self.cup_size_embedding(torch.tensor(batch_input["cup_size"]))
+        user_emb = self.user_embedding(batch_input["user_id"])
+        cup_size_emb = self.cup_size_embedding(batch_input["cup_size"])
         user_representation = torch.cat([user_emb, cup_size_emb, batch_input["user_numeric"]], axis=-1)
         user_representation = self.user_transform_blocks(user_representation)
 
         # Article Pathway
-        item_emb = self.item_embedding(torch.tensor(batch_input["item_id"]))
-        category_emb = self.category_embedding(torch.tensor(batch_input["category"]))
+        item_emb = self.item_embedding(batch_input["item_id"])
+        category_emb = self.category_embedding(batch_input["category"])
         item_representation = torch.cat([item_emb, category_emb, batch_input["item_numeric"]], axis=-1)
         item_representation = self.item_transform_blocks(item_representation)
 

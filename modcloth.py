@@ -13,7 +13,6 @@ class ModCloth(Dataset):
         return len(self.data)
 
     def __getitem__(self, idx):
-        idx = str(idx)
 
         return {
             # user features and embedding

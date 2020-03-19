@@ -7,6 +7,13 @@
         "num_cup_size_emb" : 12,
         "num_user_emb" : 47958,
 
+        "num_user_numeric": 5, // number of user features which are numeric
+        "num_item_numeric": 2, // number of item features which are numeric
+
+        "user_pathway": [256, 128, 64], //series of transformations for the use embeddings + features
+        "item_pathway": [256, 128, 64], //series of transformations for the item embeddings + features
+        "combined_pathway": [256, 128, 64, 16], //series of transformations for the item embeddings + features
+
         "activation": "relu", // relu or tanh
         "dropout": 0.3, 
 

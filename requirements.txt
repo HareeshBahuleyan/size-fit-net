@@ -4,7 +4,7 @@ jupyterlab==2.0.1
 tqdm==4.43.0
 pandas==1.0.2
 matplotlib==3.2.0
-sklearn==0.22.2
+scikit-learn==0.22.2
 jsonnet==0.15.0
 tensorboardx==2.0
 jsonlines==1.2.0

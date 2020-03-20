@@ -36,7 +36,7 @@ This new representation is fed to the top layer skip connection block.
 
 ## Instructions
 
-1. Start by installing the necessary packages:
+1. Start by installing the necessary packages (preferably within a Python virtual environment):
 ```
    pip install -r requirements.txt
 ```

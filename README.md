@@ -2,7 +2,7 @@
 
 # A Deep Learning System for Predicting Size and Fit in Fashion E-Commerce
 
-An (unofficial) implementation of SizeFitNet (SFNet) architecture proposed in the paper [A Deep Learning System for Predicting Size and Fit in Fashion E-Commerce](https://arxiv.org/pdf/1907.09844.pdf) by Sheikh et. al (RecSys'19).
+An (unofficial) PyTorch implementation of SizeFitNet (SFNet) architecture proposed in the paper [A Deep Learning System for Predicting Size and Fit in Fashion E-Commerce](https://arxiv.org/pdf/1907.09844.pdf) by Sheikh et. al (RecSys'19).
 
 ## Dataset
 The original paper demonstrates experiments on two datasets:

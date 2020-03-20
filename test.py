@@ -63,7 +63,7 @@ def main(args):
     precision, recall, f1_score, accuracy, auc = compute_metrics(target_tracker, pred_tracker)
 
     print("-"*50)
-    print("Metrics:\nPrecision={:.3f}\nRecall={:.3f}\nF1-score={:.3f}\nAccuracy={:.3f}\nAUC={:.3f}\n ".format(precision, recall, f1_score, accuracy, auc))
+    print("Metrics:\n Precision = {:.3f}\n Recall = {:.3f}\n F1-score = {:.3f}\n Accuracy = {:.3f}\n AUC = {:.3f}\n ".format(precision, recall, f1_score, accuracy, auc))
     print("-"*50)
 
 if __name__ == "__main__":

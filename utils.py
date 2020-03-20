@@ -29,9 +29,9 @@ def compute_metrics(target, pred_probs):
     Computes metrics to report
     """
     pred_labels = pred_probs.argmax(-1)
-    precision = metrics.precision_score(target, pred_labels, average='micro')
-    recall = metrics.recall_score(target, pred_labels, average='micro')
-    f1_score = metrics.f1_score(target, pred_labels, average='micro')
+    precision = metrics.precision_score(target, pred_labels, average='macro')
+    recall = metrics.recall_score(target, pred_labels, average='macro')
+    f1_score = metrics.f1_score(target, pred_labels, average='macro')
     accuracy = metrics.accuracy_score(target, pred_labels)
     auc = metrics.roc_auc_score(target, pred_probs, average='macro', multi_class='ovr')
 

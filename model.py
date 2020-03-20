@@ -96,7 +96,7 @@ class SFNet(nn.Module):
         user_emb = self.user_embedding(batch_input["user_id"])
         cup_size_emb = self.cup_size_embedding(batch_input["cup_size"])
         user_representation = torch.cat(
-            [user_emb, cup_size_emb, batch_input["user_numeric"]], axis=-1
+            [user_emb, cup_size_emb, batch_input["user_numeric"]], dim=-1
         )
         user_representation = self.user_transform_blocks(user_representation)
 
@@ -104,7 +104,7 @@ class SFNet(nn.Module):
         item_emb = self.item_embedding(batch_input["item_id"])
         category_emb = self.category_embedding(batch_input["category"])
         item_representation = torch.cat(
-            [item_emb, category_emb, batch_input["item_numeric"]], axis=-1
+            [item_emb, category_emb, batch_input["item_numeric"]], dim=-1
         )
         item_representation = self.item_transform_blocks(item_representation)
 
@@ -128,7 +128,7 @@ class SFNet(nn.Module):
         - absolute element-wise difference |u-v|
         Link: https://arxiv.org/pdf/1705.02364.pdf
         """
-        return torch.cat([u, v, torch.abs(u - v), u * v], axis=-1)
+        return torch.cat([u, v, torch.abs(u - v), u * v], dim=-1)
 
 
 class SkipBlock(nn.Module):

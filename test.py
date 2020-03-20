@@ -21,6 +21,7 @@ def main(args):
 
     # initialize model
     model = SFNet(model_config["sfnet"])
+    model = model.to(device)
 
     if not os.path.exists(args.saved_model_path):
         raise FileNotFoundError(args.saved_model_path)
@@ -28,7 +29,6 @@ def main(args):
     checkpoint = os.path.join(args.saved_model_path, args.checkpoint)
     model.load_state_dict(torch.load(checkpoint, map_location='cpu'))
     print("Model loaded from %s"%(args.saved_model_path))
-    model = model.to(device)
 
     # tracker to keep true labels and predicted probabilitites  
     target_tracker = []
@@ -63,7 +63,7 @@ def main(args):
     precision, recall, f1_score, accuracy, auc = compute_metrics(target_tracker, pred_tracker)
 
     print("-"*50)
-    print("Metrics:\nPrecision={:.3f}\Recall={:.3f}\nF1-score={:.3f}\nAccuracy={:.3f}\AUC={:.3f}\n ".format(precision, recall, f1_score, accuracy, auc))
+    print("Metrics:\nPrecision={:.3f}\nRecall={:.3f}\nF1-score={:.3f}\nAccuracy={:.3f}\nAUC={:.3f}\n ".format(precision, recall, f1_score, accuracy, auc))
     print("-"*50)
 
 if __name__ == "__main__":

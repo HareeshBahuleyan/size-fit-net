@@ -8,6 +8,9 @@ class SFNet(nn.Module):
     def __init__(self, config):
         super().__init__()
 
+        self.user_pathway = config["user_pathway"][:]
+        self.item_pathway = config["item_pathway"][:]
+        self.combined_pathway = config["combined_pathway"][:]
         self.embedding_dim = config["embedding_dim"]
 
         self.user_embedding = nn.Embedding(
@@ -34,13 +37,13 @@ class SFNet(nn.Module):
         # Customer pathway transformation
         # user_embedding_dim + cup_size_embedding_dim + num_user_numeric_features
         user_features_input_size = 2 * self.embedding_dim + config["num_user_numeric"]
-        config["user_pathway"].insert(0, user_features_input_size)
+        self.user_pathway.insert(0, user_features_input_size)
         self.user_transform_blocks = []
-        for i in range(1, len(config["user_pathway"])):
+        for i in range(1, len(self.user_pathway)):
             self.user_transform_blocks.append(
                 SkipBlock(
-                    config["user_pathway"][i - 1],
-                    config["user_pathway"][i],
+                    self.user_pathway[i - 1],
+                    self.user_pathway[i],
                     config["activation"],
                 )
             )
@@ -50,13 +53,13 @@ class SFNet(nn.Module):
         # Article pathway transformation
         # item_embedding_dim + category_embedding_dim + num_item_numeric_features
         item_features_input_size = 2 * self.embedding_dim + config["num_item_numeric"]
-        config["item_pathway"].insert(0, item_features_input_size)
+        self.item_pathway.insert(0, item_features_input_size)
         self.item_transform_blocks = []
-        for i in range(1, len(config["user_pathway"])):
+        for i in range(1, len(self.item_pathway)):
             self.item_transform_blocks.append(
                 SkipBlock(
-                    config["item_pathway"][i - 1],
-                    config["item_pathway"][i],
+                    self.item_pathway[i - 1],
+                    self.item_pathway[i],
                     config["activation"],
                 )
             )
@@ -68,14 +71,14 @@ class SFNet(nn.Module):
         # t = output dim of item_transform_blocks
         # Pathway combination through [u, t, |u-t|, u*t]
         # Hence, input dimension will be 4*dim(u)
-        combined_layer_input_size = 4 * config["user_pathway"][-1]
-        config["combined_pathway"].insert(0, combined_layer_input_size)
+        combined_layer_input_size = 4 * self.user_pathway[-1]
+        self.combined_pathway.insert(0, combined_layer_input_size)
         self.combined_blocks = []
-        for i in range(1, len(config["combined_pathway"])):
+        for i in range(1, len(self.combined_pathway)):
             self.combined_blocks.append(
                 SkipBlock(
-                    config["combined_pathway"][i - 1],
-                    config["combined_pathway"][i],
+                    self.combined_pathway[i - 1],
+                    self.combined_pathway[i],
                     config["activation"],
                 )
             )
@@ -84,7 +87,7 @@ class SFNet(nn.Module):
 
         # Linear transformation from last hidden layer to output
         self.hidden2output = nn.Linear(
-            config["combined_pathway"][-1], config["num_targets"]
+            self.combined_pathway[-1], config["num_targets"]
         )
 
     def forward(self, batch_input):

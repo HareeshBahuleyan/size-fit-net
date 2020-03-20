@@ -69,7 +69,6 @@ Below are some tensorboard graphs for validation metrics.
 <img src="images/tensorboard.png" width="600"/>
 <br>
 
-
 ### Performance on Test Set
 
 | Precision| Recall  | F1-score | Accuracy |  AUC  |

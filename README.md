@@ -17,14 +17,14 @@ Both datasets are curated from fashion e-commerce websites that provide transact
 The model consits of two pathways: one that captures user embeddings + user features, the other that captures item embeddings + item features. See the following figure taken from paper:
 
 <br>
-<img src="images/sfnet.png" width="400"/>
+<img src="images/sfnet.png" width="500"/>
 <br>
 
 The representations within each pathway is transformed using residual/skip connections. The authors compare it against an MLP (without skip connections) baseline and show better performance. 
 
 Different from the paper, I combine the user representation (u) and item representation (v) using into a new tensor as below:
 ```
-[u, v, |u-v|, u*v]
+   [u, v, |u-v|, u*v]
 ```
 - concatenation of the two representations
 - element-wise product u ∗ v
@@ -38,7 +38,7 @@ This new representation is fed to the top layer skip connection block.
 
 1. Start by installing the necessary packages:
 ```
-  pip install -r requirements.txt
+   pip install -r requirements.txt
 ```
 
 2. Download the data from [here](https://www.kaggle.com/rmisra/clothing-fit-dataset-for-size-recommendation) and place it in the `data/` directory.
@@ -49,7 +49,7 @@ This new representation is fed to the top layer skip connection block.
 
 5. Train the SFNet Model:
 ```
-  python train.py
+   python train.py
 ```
 The model checkpoints and run configuration will be saved under `runs/<experiment_name>`
 The above also generates tensorboard plots of training loss and validation metrics, that would be useful to view training progress.
@@ -64,8 +64,9 @@ The model was quite sensitive to hyperparameters. For certain sets of hyperparam
 
 ### Learning Curves
 Below are some tensorboard graphs for validation metrics. 
+
 <br>
-<img src="images/tensorboard.png" width="400"/>
+<img src="images/tensorboard.png" width="600"/>
 <br>
 
 

@@ -58,7 +58,9 @@ def main(args):
     loss_criterion = torch.nn.CrossEntropyLoss(reduction="mean")
 
     optimizer = torch.optim.Adam(
-        model.parameters(), lr=model_config["trainer"]["optimizer"]["lr"], weight_decay=model_config["trainer"]["optimizer"]["weight_decay"]
+        model.parameters(),
+        lr=model_config["trainer"]["optimizer"]["lr"],
+        weight_decay=model_config["trainer"]["optimizer"]["weight_decay"],
     )
 
     step = 0
@@ -75,7 +77,7 @@ def main(args):
             )
 
             loss_tracker = defaultdict(tensor)
-            
+
             # Enable/Disable Dropout
             if split == "train":
                 model.train()
@@ -104,7 +106,9 @@ def main(args):
                     step += 1
 
                 # bookkeepeing
-                loss_tracker["Total Loss"] = torch.cat((loss_tracker["Total Loss"], loss.view(1)))
+                loss_tracker["Total Loss"] = torch.cat(
+                    (loss_tracker["Total Loss"], loss.view(1))
+                )
 
                 if model_config["logging"]["tensorboard"]:
                     writer.add_scalar(
@@ -154,8 +158,12 @@ def main(args):
         if split == "valid" and model_config["logging"]["tensorboard"]:
             # not considering the last (incomplete) batch for metrics
             target_tracker = np.stack(target_tracker[:-1]).reshape(-1)
-            pred_tracker = np.stack(pred_tracker[:-1], axis=0).reshape(-1, model_config["sfnet"]["num_targets"])
-            precision, recall, f1_score, accuracy, auc = compute_metrics(target_tracker, pred_tracker)
+            pred_tracker = np.stack(pred_tracker[:-1], axis=0).reshape(
+                -1, model_config["sfnet"]["num_targets"]
+            )
+            precision, recall, f1_score, accuracy, auc = compute_metrics(
+                target_tracker, pred_tracker
+            )
 
             writer.add_scalar("%s-Epoch/Precision" % split.upper(), precision, epoch)
             writer.add_scalar("%s-Epoch/Recall" % split.upper(), recall, epoch)

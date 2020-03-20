@@ -86,9 +86,7 @@ class SFNet(nn.Module):
         self.combined_blocks = nn.Sequential(*self.combined_blocks)
 
         # Linear transformation from last hidden layer to output
-        self.hidden2output = nn.Linear(
-            self.combined_pathway[-1], config["num_targets"]
-        )
+        self.hidden2output = nn.Linear(self.combined_pathway[-1], config["num_targets"])
 
     def forward(self, batch_input):
 
@@ -116,7 +114,7 @@ class SFNet(nn.Module):
 
         # Output layer of logits
         logits = self.hidden2output(combined_representation)
-        pred_probs = F.softmax(logits, dim=-1) 
+        pred_probs = F.softmax(logits, dim=-1)
 
         return logits, pred_probs
 

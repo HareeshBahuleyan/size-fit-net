@@ -3,7 +3,6 @@ import argparse
 import torch
 import numpy as np
 
-from collections import defaultdict, OrderedDict
 from utils import compute_metrics
 from utils import to_var, load_config_from_json
 
@@ -17,7 +16,9 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 def main(args):
 
     data_config = load_config_from_json(args.data_config_path)
-    model_config = load_config_from_json(os.path.join(args.saved_model_path, "config.jsonl"))
+    model_config = load_config_from_json(
+        os.path.join(args.saved_model_path, "config.jsonl")
+    )
 
     # initialize model
     model = SFNet(model_config["sfnet"])
@@ -27,10 +28,10 @@ def main(args):
         raise FileNotFoundError(args.saved_model_path)
 
     checkpoint = os.path.join(args.saved_model_path, args.checkpoint)
-    model.load_state_dict(torch.load(checkpoint, map_location='cpu'))
-    print("Model loaded from %s"%(args.saved_model_path))
+    model.load_state_dict(torch.load(checkpoint, map_location="cpu"))
+    print("Model loaded from %s" % (args.saved_model_path))
 
-    # tracker to keep true labels and predicted probabilitites  
+    # tracker to keep true labels and predicted probabilitites
     target_tracker = []
     pred_tracker = []
 
@@ -41,7 +42,7 @@ def main(args):
         batch_size=model_config["trainer"]["batch_size"],
         shuffle=False,
     )
-    
+
     print("Evaluating model on test data ...")
     model.eval()
     with torch.no_grad():
@@ -59,12 +60,21 @@ def main(args):
             pred_tracker.append(pred_probs.cpu().data.numpy())
 
     target_tracker = np.stack(target_tracker[:-1]).reshape(-1)
-    pred_tracker = np.stack(pred_tracker[:-1], axis=0).reshape(-1, model_config["sfnet"]["num_targets"])
-    precision, recall, f1_score, accuracy, auc = compute_metrics(target_tracker, pred_tracker)
+    pred_tracker = np.stack(pred_tracker[:-1], axis=0).reshape(
+        -1, model_config["sfnet"]["num_targets"]
+    )
+    precision, recall, f1_score, accuracy, auc = compute_metrics(
+        target_tracker, pred_tracker
+    )
 
-    print("-"*50)
-    print("Metrics:\n Precision = {:.3f}\n Recall = {:.3f}\n F1-score = {:.3f}\n Accuracy = {:.3f}\n AUC = {:.3f}\n ".format(precision, recall, f1_score, accuracy, auc))
-    print("-"*50)
+    print("-" * 50)
+    print(
+        "Metrics:\n Precision = {:.3f}\n Recall = {:.3f}\n F1-score = {:.3f}\n Accuracy = {:.3f}\n AUC = {:.3f}\n ".format(
+            precision, recall, f1_score, accuracy, auc
+        )
+    )
+    print("-" * 50)
+
 
 if __name__ == "__main__":
 

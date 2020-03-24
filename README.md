@@ -22,7 +22,7 @@ The model consits of two pathways: one that captures user embeddings + user feat
 
 The representations within each pathway is transformed using residual/skip connections. The authors compare it against an MLP (without skip connections) baseline and show better performance. 
 
-Different from the paper, I combine the user representation (u) and item representation (v) using into a new tensor as below:
+Different from the paper, I combine the user representation (u) and item representation (v) into a new tensor as below:
 ```
    [u, v, |u-v|, u*v]
 ```

@@ -86,7 +86,9 @@ Some future work for this repository and ideas are plausible ways to improve the
 * Early Stopping
 * Learning Rate Decay
 * Weighted Loss Function to account for the class-imbalance
-* Contrastive Learning to encourage learning different sub-spaces for positive and negative size-fits
+* Contrastive Learning (Siamese Networks-?) to encourage learning different sub-spaces for positive and negative size-fits
+* Topic Modelling Approaches
+* Modelling Users/Items as Distributions
 
 ## Acknowledgements
 Thanks to Rishab Mishra for making the datasets used here publicly available on [Kaggle](https://www.kaggle.com/rmisra/clothing-fit-dataset-for-size-recommendation). Some ideas for pre-processing the data were borrowed from [NeverInAsh](https://github.com/NeverInAsh/fit-recommendation).
